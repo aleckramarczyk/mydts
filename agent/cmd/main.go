@@ -1,11 +1,18 @@
 package main
 
+import (
+	"aleckramarczyk/mydts/agent/entities"
+	"aleckramarczyk/mydts/agent/utils"
+)
+
+var mdt *entities.MDT
+
 func main() {
 	//get config information
-	LoadConfig
+	utils.LoadConfig()
 	//gather information
-	mac = getMac()
-	uuid = getUUID()
+	mdt.Dock_MAC = utils.GetMAC()
+	mdt.MDT_UUID = utils.GET_UUID()
 
 	//Send request to API endpoint
 
