@@ -1,0 +1,4 @@
+*.rest
+docker-compose.yml
+*.env
+server
