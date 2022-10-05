@@ -30,5 +30,5 @@ func LoadConfig() {
 }
 
 func echoConf() {
-	log.Printf("Config loaded. API_Host: %s API_Endpoint: %s", AgentConfig.API_Host, AgentConfig.API_Host)
+	log.Printf("Config loaded. API_Host: %s API_Endpoint: %s", AgentConfig.API_Host, AgentConfig.API_Endpoint)
 }

@@ -3,18 +3,42 @@ package main
 import (
 	"aleckramarczyk/mydts/agent/entities"
 	"aleckramarczyk/mydts/agent/utils"
+	"log"
+	"time"
 )
-
-var mdt *entities.MDT
 
 func main() {
 	//get config information
 	utils.LoadConfig()
-	//gather information
-	mdt.Dock_MAC = utils.GetMAC()
-	mdt.MDT_UUID = utils.GET_UUID()
 
-	//Send request to API endpoint
+	var err error
+	Mdt := &entities.MDT{}
 
-	//sleep and repeat
+	Mdt.MDT_UUID, err = utils.GET_UUID()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for {
+		interfaces, err := utils.GetInterfacesHardwareAddrs()
+		if err != nil {
+			time.Sleep(time.Minute * 10)
+			continue
+		}
+		if utils.ConnectedToDock(interfaces) {
+			//send request
+			Mdt.Dock_MAC = interfaces["Ethernet 3"]
+			err := utils.SendInfoRequest(Mdt)
+			if err != nil {
+				time.Sleep(time.Minute * 10)
+				continue
+			}
+		} else {
+			log.Println("Not connected to dock. Skipping update")
+			time.Sleep(time.Minute * 10)
+			continue
+		}
+		log.Println("Info update successful")
+		time.Sleep(time.Minute * 10)
+	}
 }

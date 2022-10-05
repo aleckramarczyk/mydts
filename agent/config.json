@@ -1,0 +1,4 @@
+{
+    "API_Host": "10.224.1.88:8080",
+    "API_Endpoint": "/api/mdt"
+}
