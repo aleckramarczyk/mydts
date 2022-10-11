@@ -10,9 +10,11 @@ import (
 
 func main() {
 	var err error
+
 	//TODO allow specification of config path
 	LoadAppConfig(".")
 
+	// Connect to and migrate database
 	err = ConnectDB(GenerateConfigString())
 	if err != nil {
 		log.Println("Failed to connect to database:")
@@ -25,6 +27,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Register API endpoints, start http server.
 	router := mux.NewRouter().StrictSlash(true)
 	registerApiRoutes(router)
 

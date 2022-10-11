@@ -3,8 +3,8 @@ package main
 import "time"
 
 type MDT struct {
-	ID      string    `json:"id"`
-	DockMac string    `json:"dock_mac"`
-	IP      string    `json:"ip"`
-	Updated time.Time `json:"updated"`
+	Dock_mac  string    `gorm:"primaryKey" json:"dock_mac"`
+	Mdt_uuid  string    `gorm:"not null" json:"mdt_uuid"`
+	Remote_ip string    `gorm:"not null" json:"ip"`
+	Updated   time.Time `gorm:"not null" json:"updated"`
 }

@@ -25,10 +25,20 @@ func GenerateConfigString() string {
 	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", AppConfig.DB_user, AppConfig.DB_password, AppConfig.DB_host, AppConfig.DB_port, AppConfig.DB_table)
 }
 
-func MDTExists(id string) bool {
+/*
+func MDTExists(mac string) bool {
 	var mdt MDT
-	Instance.First(&mdt, id)
-	return mdt.ID != ""
+	Instance.First(&mdt, mac)
+	if mdt.Dock_mac == "" {
+		return false
+	}
+	return true
+}
+*/
+func MDTExists(mac string) bool {
+	var mdt MDT
+	r := Instance.Where("dock_mac = ?", mac).Limit(1).Find(&mdt)
+	return r.RowsAffected > 0
 }
 
 func Migrate() error {

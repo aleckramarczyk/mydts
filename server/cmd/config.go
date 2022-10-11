@@ -13,6 +13,7 @@ type Config struct {
 	DB_user     string `mapstructure:"DB_USER"`
 	DB_password string `mapstructure:"DB_PASSWORD"`
 	API_port    string `mapstructure:"API_PORT"`
+	DEBUG       int    `mapstructure:"DEBUG"`
 }
 
 var AppConfig *Config
@@ -29,6 +30,7 @@ func LoadAppConfig(path string) {
 	viper.BindEnv("DB_USER")
 	viper.BindEnv("DB_PASSWORD")
 	viper.BindEnv("API_PORT")
+	viper.BindEnv("DEBUG")
 	err := viper.ReadInConfig()
 	if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 		log.Println(err)
