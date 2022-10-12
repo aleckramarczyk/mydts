@@ -18,6 +18,8 @@ COPY ./server/cmd/*.go ./
 
 RUN go build -o ./app
 
+RUN rm ./*.go
+
 EXPOSE $API_PORT
 
 ENTRYPOINT ["./app"]
