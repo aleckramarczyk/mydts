@@ -14,7 +14,7 @@ func registerApiRoutes(router *mux.Router) {
 }
 
 func createMDT(mdt *MDT) {
-	if AppConfig.DEBUG == 1 {
+	if AppConfig.DEBUG {
 		log.Println("createMDT triggered")
 	}
 	Instance.Create(&mdt)
@@ -22,7 +22,7 @@ func createMDT(mdt *MDT) {
 }
 
 func updateMDT(newMdt *MDT) {
-	if AppConfig.DEBUG == 1 {
+	if AppConfig.DEBUG {
 		log.Println("updateMDT triggered")
 	}
 	var oldMdt MDT
@@ -43,12 +43,12 @@ func postMDT(w http.ResponseWriter, r *http.Request) {
 
 	if MDTExists(mdt.Dock_mac) {
 		updateMDT(&mdt)
-		if AppConfig.DEBUG == 1 {
+		if AppConfig.DEBUG {
 			log.Printf("DEBUG: Post request. mac: %s, mdtExists: true\n", mdt.Dock_mac)
 		}
 	} else {
 		createMDT(&mdt)
-		if AppConfig.DEBUG == 1 {
+		if AppConfig.DEBUG {
 			log.Printf("DEBUG: Post request. Mac: %s, mdtExists: false\n", mdt.Dock_mac)
 		}
 	}

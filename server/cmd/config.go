@@ -13,7 +13,7 @@ type Config struct {
 	DB_user     string `mapstructure:"DB_USER"`
 	DB_password string `mapstructure:"DB_PASSWORD"`
 	API_port    string `mapstructure:"API_PORT"`
-	DEBUG       int    `mapstructure:"DEBUG"`
+	DEBUG       bool   `mapstructure:"DEBUG"`
 }
 
 var AppConfig *Config
