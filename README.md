@@ -3,8 +3,9 @@ MDT telemetry server and agent
 This project is designed to run in a docker deployment. Requires a mysql database connection.
 
 First, build the image:
-  from parent directory:
-  docker build . --rm --tag mydts:1.0
+```bash
+docker build . --rm --tag mydts:1.0
+```
 
 Example docker compose file:
 ```yaml
@@ -55,6 +56,7 @@ config.json:
   "API_Host": "0.0.0.0:8080",
   "API_Endpoint": "/api/mdt"
 }
+```
 Replace API_Host with the IP that your server will be running on 
 
 Next build the agent:
