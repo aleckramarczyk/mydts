@@ -61,7 +61,7 @@ Replace API_Host with the IP that your server will be running on
 
 Next build the agent:
 ```bash
-go build -o agent.exe ./agent/cmd
+GOOS=windows go build -o agent.exe ./agent/cmd
 zip agent.zip agent.exe config.json
 rm agent.exe
 ```
