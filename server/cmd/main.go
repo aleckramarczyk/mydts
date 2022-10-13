@@ -1,6 +1,9 @@
 package main
 
 import (
+	"aleckramarczyk/mydts/server/api"
+	"aleckramarczyk/mydts/server/db"
+	"aleckramarczyk/mydts/server/utils"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,16 +15,16 @@ func main() {
 	var err error
 
 	//TODO allow specification of config path
-	LoadAppConfig(".")
+	utils.LoadAppConfig(".")
 
 	// Connect to and migrate database
-	err = ConnectDB(GenerateConfigString())
+	err = db.ConnectDB(db.GenerateConfigString())
 	if err != nil {
 		log.Println("Failed to connect to database:")
 		log.Fatal(err)
 	}
 
-	err = Migrate()
+	err = db.Migrate()
 	if err != nil {
 		log.Println("Failed to migrate database: ")
 		log.Fatal(err)
@@ -29,8 +32,8 @@ func main() {
 
 	// Register API endpoints, start http server.
 	router := mux.NewRouter().StrictSlash(true)
-	registerApiRoutes(router)
+	api.RegisterApiRoutes(router)
 
-	log.Printf("Starting server on port %s", AppConfig.API_port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", AppConfig.API_port), router))
+	log.Printf("Starting server on port %s", utils.AppConfig.API_port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", utils.AppConfig.API_port), router))
 }

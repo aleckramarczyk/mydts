@@ -1,8 +1,11 @@
-package main
+package db
 
 import (
 	"fmt"
 	"log"
+
+	"aleckramarczyk/mydts/server/entities"
+	"aleckramarczyk/mydts/server/utils"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -22,27 +25,17 @@ func ConnectDB(connectionString string) error {
 }
 
 func GenerateConfigString() string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", AppConfig.DB_user, AppConfig.DB_password, AppConfig.DB_host, AppConfig.DB_port, AppConfig.DB_table)
+	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", utils.AppConfig.DB_user, utils.AppConfig.DB_password, utils.AppConfig.DB_host, utils.AppConfig.DB_port, utils.AppConfig.DB_table)
 }
 
-/*
 func MDTExists(mac string) bool {
-	var mdt MDT
-	Instance.First(&mdt, mac)
-	if mdt.Dock_mac == "" {
-		return false
-	}
-	return true
-}
-*/
-func MDTExists(mac string) bool {
-	var mdt MDT
+	var mdt entities.MDT
 	r := Instance.Where("dock_mac = ?", mac).Limit(1).Find(&mdt)
 	return r.RowsAffected > 0
 }
 
 func Migrate() error {
-	err := Instance.AutoMigrate(&MDT{})
+	err := Instance.AutoMigrate(&entities.MDT{})
 	if err != nil {
 		return err
 	}

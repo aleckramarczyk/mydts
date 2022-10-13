@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"encoding/json"
@@ -6,49 +6,53 @@ import (
 	"net/http"
 	"time"
 
+	"aleckramarczyk/mydts/server/db"
+	"aleckramarczyk/mydts/server/entities"
+	"aleckramarczyk/mydts/server/utils"
+
 	"github.com/gorilla/mux"
 )
 
-func registerApiRoutes(router *mux.Router) {
+func RegisterApiRoutes(router *mux.Router) {
 	router.HandleFunc("/api/mdt", postMDT).Methods("POST")
 }
 
-func createMDT(mdt *MDT) {
-	if AppConfig.DEBUG {
+func CreateMDT(mdt *entities.MDT) {
+	if utils.AppConfig.DEBUG {
 		log.Println("createMDT triggered")
 	}
-	Instance.Create(&mdt)
+	db.Instance.Create(&mdt)
 	log.Printf("CREATE | ID: %s | REMOTE_IP: %s | DOCK_MAC: %s", mdt.Mdt_uuid, mdt.Remote_ip, mdt.Dock_mac)
 }
 
-func updateMDT(newMdt *MDT) {
-	if AppConfig.DEBUG {
+func UpdateMDT(newMdt *entities.MDT) {
+	if utils.AppConfig.DEBUG {
 		log.Println("updateMDT triggered")
 	}
-	var oldMdt MDT
-	Instance.First(&oldMdt, newMdt.Dock_mac)
+	var oldMdt entities.MDT
+	db.Instance.First(&oldMdt, newMdt.Dock_mac)
 	oldMdt.Dock_mac = newMdt.Dock_mac
 	oldMdt.Mdt_uuid = newMdt.Mdt_uuid
 	oldMdt.Remote_ip = newMdt.Remote_ip
 	oldMdt.Updated = newMdt.Updated
-	Instance.Save(&oldMdt)
+	db.Instance.Save(&oldMdt)
 	log.Printf("UPDATE | ID: %s | REMOTE_IP: %s | DOCK_MAC: %s", oldMdt.Mdt_uuid, oldMdt.Remote_ip, oldMdt.Dock_mac)
 }
 
 func postMDT(w http.ResponseWriter, r *http.Request) {
-	var mdt MDT
+	var mdt entities.MDT
 	json.NewDecoder(r.Body).Decode(&mdt)
 	mdt.Remote_ip = r.RemoteAddr
 	mdt.Updated = time.Now()
 
-	if MDTExists(mdt.Dock_mac) {
-		updateMDT(&mdt)
-		if AppConfig.DEBUG {
+	if db.MDTExists(mdt.Dock_mac) {
+		UpdateMDT(&mdt)
+		if utils.AppConfig.DEBUG {
 			log.Printf("DEBUG: Post request. mac: %s, mdtExists: true\n", mdt.Dock_mac)
 		}
 	} else {
-		createMDT(&mdt)
-		if AppConfig.DEBUG {
+		CreateMDT(&mdt)
+		if utils.AppConfig.DEBUG {
 			log.Printf("DEBUG: Post request. Mac: %s, mdtExists: false\n", mdt.Dock_mac)
 		}
 	}

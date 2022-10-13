@@ -14,11 +14,11 @@ COPY go.sum ./
 
 RUN go mod download
 
-COPY ./server/cmd/*.go ./
+COPY ./server ./server
 
-RUN go build -o ./app
+RUN go build -o ./app ./server/cmd 
 
-RUN rm ./*.go
+RUN rm -rf ./server
 
 EXPOSE $API_PORT
 
