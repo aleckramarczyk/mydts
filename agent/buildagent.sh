@@ -1,2 +1,3 @@
-GOOS=windows go build ./cmd -o ./agent.exe
-mv agent.exe /home/alec/Shared/agent.exe
+GOOS=windows go build -o agent.exe ./cmd 
+zip agent.zip agent.exe config.json
+rm agent.exe

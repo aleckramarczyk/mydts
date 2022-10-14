@@ -2,6 +2,8 @@ package utils
 
 import (
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/viper"
 )
@@ -15,10 +17,17 @@ var AgentConfig *Config
 
 func LoadConfig() {
 	log.Println("Attempting to load agent configuration...")
-	viper.AddConfigPath(".")
+
+	ex, err := os.Executable()
+	if err != nil {
+		log.Fatal(err)
+	}
+	exPath := filepath.Dir(ex)
+
+	viper.AddConfigPath(exPath)
 	viper.SetConfigName("config")
 	viper.SetConfigType("json")
-	err := viper.ReadInConfig()
+	err = viper.ReadInConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
