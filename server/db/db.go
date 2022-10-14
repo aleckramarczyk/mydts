@@ -34,8 +34,24 @@ func MDTExists(mac string) bool {
 	return r.RowsAffected > 0
 }
 
+func ShopExists(mac string) bool {
+	var shop entities.Shop
+	r := Instance.Where("dock_mac = ?", mac).Limit(1).Find(&shop)
+	return r.RowsAffected > 0
+}
+
+func ShopExistsByShopNumber(shopNumber string) bool {
+	var shop entities.Shop
+	r := Instance.Where("shop_number = ?", shopNumber).Limit(1).Find(&shop)
+	return r.RowsAffected > 0
+}
+
 func Migrate() error {
 	err := Instance.AutoMigrate(&entities.MDT{})
+	if err != nil {
+		return err
+	}
+	err = Instance.AutoMigrate(&entities.Shop{})
 	if err != nil {
 		return err
 	}
