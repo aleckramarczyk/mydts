@@ -1,4 +1,10 @@
 {
-    "API_Host": "10.224.1.88:8080",
-    "API_Endpoint": "/api/mdt"
+    "ApiHost": "10.224.1.123:8080",
+    "ApiEndpoint": "/api/mdt",
+    "UpdateInterval": "10s",
+    "ApplicationStatePath": "C:\\Program Files (x86)\\Intergraph\\MobilePublicSafety\\WsgApplicationData\\data\\persistence\\ApplicationState.xml",
+    "FromClientGPSPath": "C:\\Program Files (x86)\\Intergraph\\MobilePublicSafety\\WsgApplicationData\\data\\archive\\fromClient\\GPS",
+    "FromClientAuthorizePath": "C:\\Program Files (x86)\\Intergraph\\MobilePublicSafety\\WsgApplicationData\\data\\archive\\fromClient\\Authorize",
+    "FromClientSignOffPath": "C:\\Program Files (x86)\\Intergraph\\MobilePublicSafety\\WsgApplicationData\\data\\archive\\fromClient\\SignOff",
+    "UpdateOnInterval": false
 }

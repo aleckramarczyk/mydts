@@ -1,25 +1,26 @@
-# syntax=docker/dockerfile:1
-FROM golang:1.18.6-alpine
-
-RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
-
-RUN mkdir -p /app
+#Latest golang base image as builder
+FROM golang:latest as builder
 
 WORKDIR /app
 
-ENV API_PORT=8080
-
-COPY go.mod ./
-COPY go.sum ./
+COPY go.mod go.sum ./
 
 RUN go mod download
 
-COPY ./server ./server
+COPY ./server ./
 
-RUN go build -o ./app ./server/cmd 
+RUN CGO_ENABLED=0 GOOS=linux go build -a -o main .
 
-RUN rm -rf ./server
+#Create app container
+FROM alpine:latest
 
-EXPOSE $API_PORT
+RUN apk --no-cache add ca-certificates
 
-ENTRYPOINT ["./app"]
+WORKDIR /root/
+
+#Copy the binary artifact from builder container to app container
+COPY --from=builder /app/main .
+
+EXPOSE 8080
+
+CMD ["./main"]

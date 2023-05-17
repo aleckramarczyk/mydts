@@ -1,21 +1,23 @@
 package utils
 
 import (
-	"aleckramarczyk/mydts/agent/entities"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 )
 
-func SendInfoRequest(Mdt *entities.MDT) error {
+func SendUpdateRequest(u *Unit) error {
+	log.Printf("Sending update request: %s\n", time.Now().String())
 	url := getEndpoint()
-	body, err := json.Marshal(Mdt)
+	body, err := json.Marshal(u)
 	if err != nil {
-		log.Printf("Error encoding MDT object: %s\n", err)
+		log.Printf("Error encoding u object: %s\n", err)
 		return err
 	}
+	log.Println(string(body))
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(body))
 	if err != nil {
 		log.Printf("Error creating POST request: %s\n", err)
@@ -26,5 +28,5 @@ func SendInfoRequest(Mdt *entities.MDT) error {
 }
 
 func getEndpoint() string {
-	return fmt.Sprintf("http://%s:%s", AgentConfig.API_Host, AgentConfig.API_Endpoint)
+	return fmt.Sprintf("http://%s:%s", AgentConfig.ApiHost, AgentConfig.ApiEndpoint)
 }

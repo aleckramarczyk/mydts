@@ -1,15 +1,12 @@
 package main
 
 import (
-	"aleckramarczyk/mydts/agent/entities"
 	"aleckramarczyk/mydts/agent/utils"
-	"log"
-	"time"
-
 	"github.com/kardianos/service"
+	"log"
 )
 
-const serviceName = "MDT Agent"
+const serviceName = "Unit Agent"
 const serviceDescription = "Telemetry service for MDTs"
 
 type program struct{}
@@ -26,42 +23,28 @@ func (p program) Stop(s service.Service) error {
 }
 
 func (p program) run() {
-	var err error
-	Mdt := &entities.MDT{}
+	go utils.WatchForEvents()
 
-	Mdt.MDT_UUID, err = utils.GET_UUID()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for {
-		interfaces, err := utils.GetInterfacesHardwareAddrs()
-		if err != nil {
-			time.Sleep(time.Minute * 10)
-			continue
-		}
-		if utils.ConnectedToDock(interfaces) {
-			//send request
-			Mdt.Dock_MAC = interfaces["Ethernet 3"]
-			err := utils.SendInfoRequest(Mdt)
-			if err != nil {
-				time.Sleep(time.Minute * 10)
-				continue
-			}
-		} else {
-			log.Println("Not connected to dock. Skipping update")
-			time.Sleep(time.Minute * 10)
-			continue
-		}
-		log.Println("Info update successful")
-		time.Sleep(time.Minute * 10)
+	if utils.AgentConfig.UpdateOnInterval {
+		utils.SendUpdateOnInterval()
 	}
 }
 
-func main() {
-	//get config information
+func init() {
+	var err error
+
 	utils.LoadConfig()
 
+	// Get initial information about the unit
+	utils.UnitInformation.SerialNumber, err = utils.GetSerialNumber()
+	if err != nil {
+		log.Fatal("Fatal error getting UUID:", err)
+	}
+	utils.UnitInformation.InternalIP = utils.GetLocalIP()
+
+}
+
+func main() {
 	serviceConfig := &service.Config{
 		Name:        serviceName,
 		DisplayName: serviceName,
@@ -77,5 +60,4 @@ func main() {
 	if err != nil {
 		log.Println("Cannot start the service " + err.Error())
 	}
-
 }
