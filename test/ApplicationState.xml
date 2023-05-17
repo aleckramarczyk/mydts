@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ApplicationState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LastBackOfficeMessageId>24539</LastBackOfficeMessageId>
+  <LastUeDeltaMessageId>24538</LastUeDeltaMessageId>
+  <LastFileUploadMessageId>35371</LastFileUploadMessageId>
+  <LastFileDownloadMessageId>26009</LastFileDownloadMessageId>
+  <AuthorizeForm>
+    <Settings>
+      <string>COM371</string>
+      <string>COM371</string>
+      <string>GR1250</string>
+      <string />
+      <string />
+      <string />
+    </Settings>
+  </AuthorizeForm>
+  <ColorState>
+    <ThemeName>Day</ThemeName>
+  </ColorState>
+</ApplicationState>
