@@ -1,0 +1,1 @@
+/home/alec/go/src/mydtsbak/server/views/mdt/index.tpl
