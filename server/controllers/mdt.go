@@ -5,6 +5,7 @@ import (
 	"errors"
 	"server/models"
 	"strings"
+	"time"
 
 	beego "github.com/beego/beego/v2/server/web"
 )
@@ -35,6 +36,9 @@ func (c *MdtController) Post() {
 
 	// Save the remote IP address, trim  the port number
 	v.RemoteIp = strings.Split(c.Ctx.Request.RemoteAddr, ":")[0]
+
+	// Set Updated to current time
+	v.Updated = time.Now()
 
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 

@@ -6,6 +6,7 @@ import (
 	"os"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/beego/beego/v2/client/orm"
 
@@ -18,8 +19,9 @@ type Mdt struct {
 	UnitId       string `orm:"size(128)"`
 	VehicleId    string `orm:"size(128)"`
 	SignedOn     bool
-	InternalIp   string `orm:"size(128)"`
-	RemoteIp     string `orm:"size(128)"`
+	InternalIp   string    `orm:"size(128)"`
+	RemoteIp     string    `orm:"size(128)"`
+	Updated      time.Time `orm:"auto_now"`
 }
 
 func init() {
@@ -169,6 +171,18 @@ func DeleteMdt(SerialNumber string) (err error) {
 		if num, err = o.Delete(&Mdt{SerialNumber: SerialNumber}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
+	}
+	return
+}
+
+// GetMdt returns a list of all Mdt in database
+func GetMdt() (ml []Mdt, err error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable(new(Mdt))
+	var l []Mdt
+	if _, err = qs.All(&l); err == nil {
+		ml = l
+		return
 	}
 	return
 }

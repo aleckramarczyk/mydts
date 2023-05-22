@@ -36,7 +36,7 @@ func init() {
 	utils.LoadConfig()
 
 	// Get initial information about the unit
-	utils.MDTSerialNumber, err = utils.GetSerialNumber()
+	utils.UnitInformation.SerialNumber, err = utils.GetSerialNumber()
 	if err != nil {
 		log.Fatal("Fatal error getting UUID:", err)
 	}
