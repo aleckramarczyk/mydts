@@ -7,6 +7,8 @@ services:
       MYSQL_DATABASE: "mdts"
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     restart: unless-stopped
+    networks:
+      - mydts
 
   mydts:
     image: mydts
@@ -19,3 +21,8 @@ services:
     links:
       - mysql:mysql
     restart: unless-stopped
+    networks:
+      - mydts
+
+networks:
+  mydts:
