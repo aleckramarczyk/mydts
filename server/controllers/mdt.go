@@ -3,8 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
-	"mydtsbak/server/models"
-	"strconv"
+	"server/models"
 	"strings"
 
 	beego "github.com/beego/beego/v2/server/web"
@@ -33,27 +32,41 @@ func (c *MdtController) URLMapping() {
 // @router / [post]
 func (c *MdtController) Post() {
 	var v models.Mdt
+
+	// Save the remote IP address, trim  the port number
+	v.RemoteIp = strings.Split(c.Ctx.Request.RemoteAddr, ":")[0]
+
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	if _, err := models.AddMdt(&v); err == nil {
-		c.Ctx.Output.SetStatus(201)
-		c.Data["json"] = v
-	} else {
-		c.Data["json"] = err.Error()
+
+	//If the MDT already exists, update the MDT
+	if _, err := models.GetMdtBySerialNumber(v.SerialNumber); err == nil {
+		if err := models.UpdateMdtBySerialNumber(&v); err == nil {
+			c.Ctx.Output.SetStatus(200) // Status OK
+			c.Data["json"] = v
+		} else {
+			c.Data["json"] = err.Error()
+		}
+	} else { //If the MDT doesn't exist, add the MDT
+		if _, err := models.AddMdt(&v); err == nil {
+			c.Ctx.Output.SetStatus(201) // Status Created
+			c.Data["json"] = v
+		} else {
+			c.Data["json"] = err.Error()
+		}
 	}
 	c.ServeJSON()
 }
 
 // GetOne ...
 // @Title Get One
-// @Description get Mdt by id
-// @Param	id		path 	string	true		"The key for staticblock"
+// @Description get Mdt by SerialNumber
+// @Param	SerialNumber		path 	string	true		"The key for staticblock"
 // @Success 200 {object} models.Mdt
-// @Failure 403 :id is empty
-// @router /:id [get]
+// @Failure 403 :SerialNumber is empty
+// @router /:SerialNumber [get]
 func (c *MdtController) GetOne() {
-	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.ParseInt(idStr, 0, 64)
-	v, err := models.GetMdtById(id)
+	SerialNumber := c.Ctx.Input.Param(":SerialNumber")
+	v, err := models.GetMdtBySerialNumber(SerialNumber)
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {
@@ -107,7 +120,7 @@ func (c *MdtController) GetAll() {
 		for _, cond := range strings.Split(v, ",") {
 			kv := strings.SplitN(cond, ":", 2)
 			if len(kv) != 2 {
-				c.Data["json"] = errors.New("Error: invalid query key/value pair")
+				c.Data["json"] = errors.New("Error: invalSerialNumber query key/value pair")
 				c.ServeJSON()
 				return
 			}
@@ -128,17 +141,16 @@ func (c *MdtController) GetAll() {
 // Put ...
 // @Title Put
 // @Description update the Mdt
-// @Param	id		path 	string	true		"The id you want to update"
+// @Param	SerialNumber		path 	string	true		"The SerialNumber you want to update"
 // @Param	body		body 	models.Mdt	true		"body for Mdt content"
 // @Success 200 {object} models.Mdt
-// @Failure 403 :id is not int
-// @router /:id [put]
+// @Failure 403 :SerialNumber is not int
+// @router /:SerialNumber [put]
 func (c *MdtController) Put() {
-	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.ParseInt(idStr, 0, 64)
-	v := models.Mdt{Id: id}
+	SerialNumber := c.Ctx.Input.Param(":SerialNumber")
+	v := models.Mdt{SerialNumber: SerialNumber}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	if err := models.UpdateMdtById(&v); err == nil {
+	if err := models.UpdateMdtBySerialNumber(&v); err == nil {
 		c.Data["json"] = "OK"
 	} else {
 		c.Data["json"] = err.Error()
@@ -149,14 +161,13 @@ func (c *MdtController) Put() {
 // Delete ...
 // @Title Delete
 // @Description delete the Mdt
-// @Param	id		path 	string	true		"The id you want to delete"
+// @Param	SerialNumber		path 	string	true		"The SerialNumber you want to delete"
 // @Success 200 {string} delete success!
-// @Failure 403 id is empty
-// @router /:id [delete]
+// @Failure 403 SerialNumber is empty
+// @router /:SerialNumber [delete]
 func (c *MdtController) Delete() {
-	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.ParseInt(idStr, 0, 64)
-	if err := models.DeleteMdt(id); err == nil {
+	SerialNumber := c.Ctx.Input.Param(":SerialNumber")
+	if err := models.DeleteMdt(SerialNumber); err == nil {
 		c.Data["json"] = "OK"
 	} else {
 		c.Data["json"] = err.Error()

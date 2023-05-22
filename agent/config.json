@@ -1,6 +1,6 @@
 {
     "ApiHost": "10.224.1.123:8080",
-    "ApiEndpoint": "/api/mdt",
+    "ApiEndpoint": "/mdt",
     "UpdateInterval": "10s",
     "ApplicationStatePath": "C:\\Program Files (x86)\\Intergraph\\MobilePublicSafety\\WsgApplicationData\\data\\persistence\\ApplicationState.xml",
     "FromClientGPSPath": "C:\\Program Files (x86)\\Intergraph\\MobilePublicSafety\\WsgApplicationData\\data\\archive\\fromClient\\GPS",

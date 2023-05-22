@@ -11,6 +11,8 @@ require (
 )
 
 require (
+	github.com/astaxie/beego v1.12.1 // indirect
+	github.com/beego/bee v1.12.3 // indirect
 	github.com/beego/bee/v2 v2.0.4 // indirect
 	github.com/beego/beego/v2 v2.0.4 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -19,6 +21,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/flosch/pongo2 v0.0.0-20200529170236-5abacdfa4915 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
+	github.com/gadelkareem/delve v1.4.2-0.20200619175259-dcd01330766f // indirect
 	github.com/go-delve/delve v1.5.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect

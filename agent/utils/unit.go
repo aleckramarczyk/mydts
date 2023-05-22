@@ -3,15 +3,15 @@ package utils
 import "log"
 
 type Unit struct {
-	SerialNumber string `json:"serialNumber"`
-	UnitName     string `json:"unitName"`
-	UnitId       string `json:"unitId"`
-	VehicleID    string `json:"vehicleID"`
-	SignedOn     bool   `json:"signedOn"`
-	InternalIP   string `json:"internalIP"`
+	UnitName   string `json:"unitName"`
+	UnitId     string `json:"unitId"`
+	VehicleID  string `json:"vehicleID"`
+	SignedOn   bool   `json:"signedOn"`
+	InternalIP string `json:"internalIP"`
 }
 
 var UnitInformation = new(Unit)
+var MDTSerialNumber string
 
 /*
 func (u *Unit) UpdateGPSInformation(e string) {

@@ -3,40 +3,67 @@ package models
 import (
 	"errors"
 	"fmt"
+	"os"
 	"reflect"
 	"strings"
 
 	"github.com/beego/beego/v2/client/orm"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type Mdt struct {
-	Id           int64  `orm:"auto"`
-	SerialNumber string `orm:"size(128)"`
+	SerialNumber string `orm:"pk;size(128)"`
 	UnitName     string `orm:"size(128)"`
 	UnitId       string `orm:"size(128)"`
 	VehicleId    string `orm:"size(128)"`
 	SignedOn     bool
 	InternalIp   string `orm:"size(128)"`
+	RemoteIp     string `orm:"size(128)"`
 }
 
 func init() {
 	orm.RegisterModel(new(Mdt))
+
+	// Get database connection string from environment variables
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbUser := os.Getenv("DB_USER")
+	if dbUser == "" {
+		dbUser = "root"
+	}
+	dbHost := os.Getenv("DB_HOST")
+	if dbHost == "" {
+		dbHost = "127.0.0.1"
+	}
+	dbPort := os.Getenv("DB_PORT")
+	if dbPort == "" {
+		dbPort = "3306"
+	}
+	dbName := os.Getenv("DB_NAME")
+	if dbName == "" {
+		dbName = "mdts"
+	}
+	connString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8", dbUser, dbPassword, dbHost, dbPort, dbName)
+
+	orm.RegisterDataBase("default", "mysql", connString)
+
+	orm.RunSyncdb("default", false, true)
 }
 
 // AddMdt insert a new Mdt into database and returns
-// last inserted Id on success.
-func AddMdt(m *Mdt) (id int64, err error) {
+// last inserted SerialNumber on success.
+func AddMdt(m *Mdt) (SerialNumber int64, err error) {
 	o := orm.NewOrm()
-	id, err = o.Insert(m)
+	SerialNumber, err = o.Insert(m)
 	return
 }
 
-// GetMdtById retrieves Mdt by Id. Returns error if
-// Id doesn't exist
-func GetMdtById(id int64) (v *Mdt, err error) {
+// GetMdtBySerialNumber retrieves Mdt by SerialNumber. Returns error if
+// SerialNumber doesn't exist
+func GetMdtBySerialNumber(SerialNumber string) (v *Mdt, err error) {
 	o := orm.NewOrm()
-	v = &Mdt{Id: id}
-	if err = o.QueryTable(new(Mdt)).Filter("Id", id).RelatedSel().One(v); err == nil {
+	v = &Mdt{SerialNumber: SerialNumber}
+	if err = o.QueryTable(new(Mdt)).Filter("SerialNumber", SerialNumber).RelatedSel().One(v); err == nil {
 		return v, nil
 	}
 	return nil, err
@@ -66,7 +93,7 @@ func GetAllMdt(query map[string]string, fields []string, sortby []string, order 
 				} else if order[i] == "asc" {
 					orderby = v
 				} else {
-					return nil, errors.New("Error: Invalid order. Must be either [asc|desc]")
+					return nil, errors.New("Error: InvalSerialNumber order. Must be either [asc|desc]")
 				}
 				sortFields = append(sortFields, orderby)
 			}
@@ -80,7 +107,7 @@ func GetAllMdt(query map[string]string, fields []string, sortby []string, order 
 				} else if order[0] == "asc" {
 					orderby = v
 				} else {
-					return nil, errors.New("Error: Invalid order. Must be either [asc|desc]")
+					return nil, errors.New("Error: InvalSerialNumber order. Must be either [asc|desc]")
 				}
 				sortFields = append(sortFields, orderby)
 			}
@@ -116,12 +143,12 @@ func GetAllMdt(query map[string]string, fields []string, sortby []string, order 
 	return nil, err
 }
 
-// UpdateMdt updates Mdt by Id and returns error if
+// UpdateMdt updates Mdt by SerialNumber and returns error if
 // the record to be updated doesn't exist
-func UpdateMdtById(m *Mdt) (err error) {
+func UpdateMdtBySerialNumber(m *Mdt) (err error) {
 	o := orm.NewOrm()
-	v := Mdt{Id: m.Id}
-	// ascertain id exists in the database
+	v := Mdt{SerialNumber: m.SerialNumber}
+	// ascertain SerialNumber exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
 		if num, err = o.Update(m); err == nil {
@@ -131,15 +158,15 @@ func UpdateMdtById(m *Mdt) (err error) {
 	return
 }
 
-// DeleteMdt deletes Mdt by Id and returns error if
+// DeleteMdt deletes Mdt by SerialNumber and returns error if
 // the record to be deleted doesn't exist
-func DeleteMdt(id int64) (err error) {
+func DeleteMdt(SerialNumber string) (err error) {
 	o := orm.NewOrm()
-	v := Mdt{Id: id}
-	// ascertain id exists in the database
+	v := Mdt{SerialNumber: SerialNumber}
+	// ascertain SerialNumber exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Delete(&Mdt{Id: id}); err == nil {
+		if num, err = o.Delete(&Mdt{SerialNumber: SerialNumber}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}

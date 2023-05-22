@@ -28,5 +28,5 @@ func SendUpdateRequest(u *Unit) error {
 }
 
 func getEndpoint() string {
-	return fmt.Sprintf("http://%s:%s", AgentConfig.ApiHost, AgentConfig.ApiEndpoint)
+	return fmt.Sprintf("http://%s/%s/%s", AgentConfig.ApiHost, AgentConfig.ApiEndpoint, MDTSerialNumber)
 }

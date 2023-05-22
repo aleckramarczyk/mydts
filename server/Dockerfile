@@ -3,11 +3,11 @@ FROM golang:latest as builder
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
+COPY ./go.mod go.sum ./
 
 RUN go mod download
 
-COPY ./server ./
+COPY ./ ./
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -o main .
 
@@ -20,6 +20,9 @@ WORKDIR /root/
 
 #Copy the binary artifact from builder container to app container
 COPY --from=builder /app/main .
+
+#Copy configuration
+COPY conf conf
 
 EXPOSE 8080
 
