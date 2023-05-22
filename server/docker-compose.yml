@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: "mdts"
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    restart: unless-stopped
+
+  mydts:
+    image: mydts
+    environment:
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: "mysql"
+      DB_PORT: 3306
+    ports:
+      - "80:8080"
+    links:
+      - mysql:mysql
+    restart: unless-stopped
