@@ -25,6 +25,10 @@ services:
     restart: unless-stopped
     networks:
       - mydts_prod
+    depends_on:
+      mysql:
+        condition: service_started
+
 
   nginx:
     image: nginx:alpine

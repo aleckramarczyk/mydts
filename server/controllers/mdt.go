@@ -34,8 +34,11 @@ func (c *MdtController) URLMapping() {
 func (c *MdtController) Post() {
 	var v models.Mdt
 
-	// Save the remote IP address, trim  the port number
-	v.RemoteIp = strings.Split(c.Ctx.Request.RemoteAddr, ":")[0]
+	// Saves the remote IP address, first checks the X-Real-IP header for if the service is behind a reverse proxy, if not it will grab the remote address
+	v.RemoteIp = c.Ctx.Input.Header("X-Real-IP")
+	if v.RemoteIp == "" {
+		v.RemoteIp = strings.Split(c.Ctx.Request.RemoteAddr, ":")[0]
+	}
 
 	// Set Updated to current time
 	v.Updated = time.Now()
