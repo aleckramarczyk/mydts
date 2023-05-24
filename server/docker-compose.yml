@@ -2,27 +2,48 @@ version: "3.9"
 
 services:
   mysql:
-    image: mysql
+    image: mysql:latest
+    container_name: mysql_prod
+    volumes:
+      - mysql_prod:/var/lib/mysql
     environment:
       MYSQL_DATABASE: "mdts"
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     restart: unless-stopped
     networks:
-      - mydts
+      - mydts_prod
 
   mydts:
     image: mydts
+    container_name: mydts_prod
     environment:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_HOST: "mysql"
       DB_PORT: 3306
-    ports:
-      - "80:8080"
     links:
-      - mysql:mysql
+      - mysql:mysql_prod
     restart: unless-stopped
     networks:
-      - mydts
+      - mydts_prod
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_prod
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+    links:
+      - mydts:mydts_prod
+    networks:
+      - mydts_prod
 
 networks:
-  mydts:
+  mydts_prod:
+    name: mydts_prod
+
+volumes:
+  mysql_prod:
+    name: mysql_prod
