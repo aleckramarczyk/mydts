@@ -14,14 +14,16 @@ import (
 )
 
 type Mdt struct {
-	SerialNumber string `orm:"pk;size(128)"`
-	UnitName     string `orm:"size(128)"`
-	UnitId       string `orm:"size(128)"`
-	VehicleId    string `orm:"size(128)"`
-	SignedOn     bool
-	InternalIp   string    `orm:"size(128)"`
-	RemoteIp     string    `orm:"size(128)"`
-	Updated      time.Time `orm:"auto_now"`
+	SerialNumber        string `orm:"pk;size(128)"`
+	UnitName            string `orm:"size(128)"`
+	UnitId              string `orm:"size(128)"`
+	VehicleId           string `orm:"size(128)"`
+	SignedOn            bool
+	InternalIp          string    `orm:"size(128)"`
+	RemoteIp            string    `orm:"size(128)"`
+	Updated             time.Time `orm:"auto_now"`
+	GatewayMac          string
+	GatewayManufacturer string
 }
 
 func init() {

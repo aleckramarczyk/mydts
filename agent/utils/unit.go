@@ -9,6 +9,7 @@ type Unit struct {
 	VehicleID    string `json:"vehicleID"`
 	SignedOn     bool   `json:"signedOn"`
 	InternalIP   string `json:"internalIP"`
+	GatewayMac   string `json:"gatewayMac"`
 }
 
 var UnitInformation = new(Unit)
@@ -46,6 +47,9 @@ func (u *Unit) UpdateUnitPropertiesOnSignOn(e string) {
 
 	//Get local IP before update in case it has changed
 	u.InternalIP = GetLocalIP()
+	if err != nil {
+		log.Println("ERROR getting gateway mac:", err)
+	}
 
 	err = SendUpdateRequest(u)
 	if err != nil {

@@ -3,6 +3,9 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"io"
+	"log"
+	"net/http"
 	"server/models"
 	"strings"
 	"time"
@@ -45,6 +48,9 @@ func (c *MdtController) Post() {
 
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 
+	// Determine the gateway manufacturer based on supplied MAC address
+	v.GatewayManufacturer = determineGatewayManufacturer(v.GatewayMac)
+
 	//If the MDT already exists, update the MDT
 	if _, err := models.GetMdtBySerialNumber(v.SerialNumber); err == nil {
 		if err := models.UpdateMdtBySerialNumber(&v); err == nil {
@@ -62,6 +68,52 @@ func (c *MdtController) Post() {
 		}
 	}
 	c.ServeJSON()
+}
+
+func determineGatewayManufacturer(mac string) string {
+	switch oui := strings.Replace(strings.ToUpper(mac)[0:7], "-", ":", -1); {
+	case oui == "00:14:3E":
+		return "Sierra Wireless"
+	case oui == "2A:30:44" || oui == "00:30:44":
+		return "Cradlepoint"
+	default:
+		return getUnknownMac(mac)
+	}
+}
+
+func getUnknownMac(mac string) string {
+	resp, err := http.Get("https://api.maclookup.app/v2/macs/" + strings.Replace(mac, "-", ":", -1))
+	if err != nil {
+		log.Printf("Error looking up unknown MAC %s", err.Error())
+		return "Unknown"
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+
+	type macResponse struct {
+		Success    bool   `json:"success"`
+		Found      bool   `json:"found"`
+		MacPrefix  string `json:"macPrefix"`
+		Company    string `json:"company"`
+		Address    string `json:"address"`
+		Country    string `json:"country"`
+		BlockStart string `json:"blockStart"`
+		BlockEnd   string `json:"blockEnd"`
+		BlockSize  int    `json:"blockSize"`
+		BlockType  string `json:"blockType"`
+		Updated    string `json:"updated"`
+		IsRand     bool   `json:"isRand"`
+		IsPrivate  bool   `json:"isPrivate"`
+	}
+
+	responseData := macResponse{}
+	err = json.Unmarshal(body, &responseData)
+	if err != nil {
+		log.Printf("Error unmarshaling MAC request data %s", err.Error())
+		return "Unknown"
+	}
+
+	return responseData.Company
 }
 
 // GetOne ...

@@ -18,6 +18,7 @@
                 <th>Signed On</th>
                 <th>Internal IP</th>
                 <th>Remote IP</th>
+                <th>Gateway Manufacturer</th>
                 <th>Updated</th>
             </tr>
             {{range .Mdts}}
@@ -30,8 +31,10 @@
                         <td>{{.SignedOn}}</td>
                         <td>{{.InternalIp}}</td>
                         <td>{{.RemoteIp}}</td>
+                        <td>{{.GatewayManufacturer}}</td>
                         <td>{{.Updated}}</td>
-                        <td><a href="vnc://{{.RemoteIp}}:5900" class="connect-button">Connect</a></td>
+                        <td><a href="vnc://{{.RemoteIp}}:5900" class="connect-button">VNC</a></td>
+                        <td><a href="http://{{.RemoteIp}}" class="connect-button">Radio</a></td>
                     </tr>
                 {{else}}
                     <tr class="signed-off">
@@ -42,8 +45,10 @@
                         <td>{{.SignedOn}}</td>
                         <td>{{.InternalIp}}</td>
                         <td>{{.RemoteIp}}</td>
+                        <td>{{.GatewayManufacturer}}</td>
                         <td>{{.Updated}}</td>
-                        <td><a href="vnc://{{.RemoteIp}}:5900" class="connect-button">Connect</a></td>
+                        <td><a href="vnc://{{.RemoteIp}}:5900" class="connect-button">VNC</a></td>
+                        <td><a href="http://{{.RemoteIp}}" class="connect-button">Radio</a></td>
                     </tr>
                 {{end}}
             {{end}}

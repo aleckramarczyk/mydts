@@ -41,7 +41,10 @@ func init() {
 		log.Fatal("Fatal error getting UUID:", err)
 	}
 	utils.UnitInformation.InternalIP = utils.GetLocalIP()
-
+	utils.UnitInformation.GatewayMac, err = utils.GetDefaultGatewayMac()
+	if err != nil {
+		log.Println("Error getting gateway MAC")
+	}
 }
 
 func main() {

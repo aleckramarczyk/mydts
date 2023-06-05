@@ -11,7 +11,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     restart: unless-stopped
     networks:
-      - mydts_prod
+      - mydts_prod_backend
 
   mydts:
     image: mydts
@@ -24,11 +24,11 @@ services:
       - mysql:mysql_prod
     restart: unless-stopped
     networks:
-      - mydts_prod
+      - mydts_prod_frontend
+      - mydts_prod_backend
     depends_on:
       mysql:
         condition: service_started
-
 
   nginx:
     image: nginx:alpine
@@ -42,11 +42,13 @@ services:
     links:
       - mydts:mydts_prod
     networks:
-      - mydts_prod
+      - mydts_prod_frontend
 
 networks:
-  mydts_prod:
-    name: mydts_prod
+  mydts_prod_frontend:
+    name: mydts_prod_frontend
+  mydts_prod_backend:
+    name: mydts_prod_backend
 
 volumes:
   mysql_prod:

@@ -1,9 +1,12 @@
 package utils
 
 import (
+	"fmt"
+	"github.com/jackpal/gateway"
 	"log"
 	"net"
 	"os/exec"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -58,6 +61,28 @@ func ConnectedToDock() (bool, error) {
 	return false, nil
 }
 */
+
+func GetDefaultGatewayMac() (gatewayMac string, err error) {
+	gatewayIp, err := getDefaultGateway()
+	if err != nil {
+		return "", err
+	}
+	out, err := exec.Command("cmd", "/C", "arp -a "+gatewayIp).Output()
+	macLine := strings.Split(string(out), "\n")[3]
+	re := regexp.MustCompile(`\s+`)
+	macLine = re.ReplaceAllString(macLine, " ")
+	gatewayMac = strings.TrimSpace(strings.Split(macLine, " ")[2])
+	fmt.Println(gatewayMac)
+	return gatewayMac, err
+}
+
+func getDefaultGateway() (string, error) {
+	gatewayIp, err := gateway.DiscoverGateway()
+	if err != nil {
+		log.Printf("Error getting default gateway: %s\n", err.Error())
+	}
+	return gatewayIp.String(), err
+}
 
 func GetLocalIP() string {
 	// This function does not actually send any traffic, it is only detecting the IP of the default interface that the machine would use to send this traffic
